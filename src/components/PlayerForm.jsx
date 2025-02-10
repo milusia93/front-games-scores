@@ -1,7 +1,10 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { Container, Form, FormControl, FormGroup, FormLabel, FormSelect, FormText } from "react-bootstrap";
+import SelectColor from "./SelectColor";
 const PlayerForm = () => {
 
+  const [playerColor, setPlayerColor] = useState({ key: '', val: '' })
   const [addedPlayer, setAddedPlayer] = useState({
     name: "",
     email: "",
@@ -14,10 +17,24 @@ const PlayerForm = () => {
     color: ""
   })
 
+  const choicesColors = [
+    ['', 'Choose your color...'],
+    ['red', 'Red'],
+    ['blue', 'Blue'],
+    ['green', 'Green']
+  ]
+
+  const handleChangeColor = (e) => {
+    setPlayerColor({
+      key: e.target.value,
+      val: e.target.options[e.target.selectedIndex].innerText
+    })
+    handleInputChangeColor(e)
+  }
   const handleImputChange = (e) => {
     const target = e.target;
     const name = target.name;
-console.log(e.target)
+    console.log(e.target)
     setAddedPlayer({
       ...addedPlayer,
       [name]: target.value,
@@ -28,8 +45,8 @@ console.log(e.target)
     const target = e.target;
     const options = target.options
     setAddedPlayer({
-        ...addedPlayer,
-        color: options[target.selectedIndex].innerText,
+      ...addedPlayer,
+      color: options[target.selectedIndex].innerText,
     });
   }
 
@@ -58,36 +75,39 @@ console.log(e.target)
   }
   console.log(addedPlayer)
   return (
-    <div className="container lg">
-      <form onSubmit={validateForm}>
-        <div className="mb-3">
-          <label htmlFor="player-name" className="form-label">Name</label>
-          <input type="text" name="name" className="form-control" id="player-name" aria-describedby="emailHelp" value={addedPlayer.name} onChange={handleImputChange}/>
-          <div id="nameHelp" className="form-text">Choose your username.</div>
-        </div>
-        <div className="mb-3">
-          <label htmlFor="player-email" className="form-label">Email address</label>
-          <input type="email" name="email" className="form-control" id="player-email" aria-describedby="emailHelp" value={addedPlayer.email} onChange={handleImputChange}/>
-          <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
-        </div>
+    <Container>
+      <Form onSubmit={validateForm}>
+        <FormGroup className="mb-3" controlId="playerName">
+          <FormLabel>Username</FormLabel>
+          <FormControl type="text" name="name" placeholder="Username" value={addedPlayer.name} onChange={handleImputChange} />
+          <Form.Text id="nameHelp">Choose your username.</Form.Text>
+        </FormGroup>
+        <FormGroup className="mb-3">
+          <FormLabel>Email address</FormLabel>
+          <FormControl type="email" name="email" value={addedPlayer.email} onChange={handleImputChange} />
+          <FormText id="emailHelp">We'll never share your email with anyone else.</FormText>
+        </FormGroup>
         {/* <div className="mb-3">
           <label htmlFor="player-password" className="form-label">Password</label>
           <input type="password" className="form-control" id="player-password" />
         </div> */}
+        <FormGroup>
+          <FormLabel>Color</FormLabel>
+          <SelectColor values={choicesColors} handleChangeColor={handleChangeColor} selectedValue={playerColor.key} name="color" />
+        </FormGroup>
         <div className="mb-3">
           <label htmlFor="player-color" className="form-label">Color</label>
-          <select className="form-select form-select-lg mb-3" aria-label=".form-select-sm example" id="player-color" onChange={handleInputChangeColor}  defaultValue={'DEFAULT'}>
-          <option value="DEFAULT" disabled>Choose your color...</option>
-          <option value="red">Red</option>
-          <option value="blue">Blue</option>
-          <option value="green">Green</option>
-        </select>
+          <select className="form-select form-select-lg mb-3" aria-label=".form-select-sm example" id="player-color" onChange={handleInputChangeColor} value={addedPlayer.color} >
+            <option value="" disabled>Choose your color...</option>
+            <option value="red">Red</option>
+            <option value="blue">Blue</option>
+            <option value="green">Green</option>
+          </select>
         </div>
-       
-        <button type="submit" className="btn btn-primary">Submit</button>
 
-      </form>
-    </div>
+        <button type="submit" className="btn btn-primary">Submit</button>
+      </Form>
+    </Container>
   )
 }
 
