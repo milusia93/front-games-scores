@@ -1,8 +1,16 @@
 import axios from "axios";
 import config from "../config";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import PlayerForm from "../components/PlayerForm"
 
+
+const choicesColors = [
+    ['', 'Wybierz swój kolor...'],
+    ['red', 'czerwony'],
+    ['blue', 'niebieski'],
+    ['green', 'zielony']
+  ]
+  
 const AddPlayer = () => {
 
     const [addedPlayer, setAddedPlayer] = useState({
@@ -16,14 +24,7 @@ const AddPlayer = () => {
         email: "",
         color: ""
     })
-    
-    const choicesColors = [
-        ['', 'Wybierz swój kolor...'],
-        ['red', 'czerwony'],
-        ['blue', 'niebieski'],
-        ['green', 'zielony']
-      ]
- 
+     
     const handleInputChange = (e) => {
         const target = e.target;
         const name = target.name;

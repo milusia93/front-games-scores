@@ -13,6 +13,7 @@ const AppNav = () => {
                         <Nav.Link href="/players">Gracze</Nav.Link>
                         <Nav.Link href="/players/add">Dodaj gracza</Nav.Link>
                         <Nav.Link href="/games">Gry</Nav.Link>
+                        <Nav.Link href="/games/add">Dodaj grę</Nav.Link>
                         <Nav.Link href="/gamesessions/add">Zagraj</Nav.Link>
                         <Nav.Link href="/statistics">Statystyki</Nav.Link>
                     </Nav>

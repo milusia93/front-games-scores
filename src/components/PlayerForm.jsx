@@ -1,5 +1,3 @@
-import axios from "axios";
-import { useState, useEffect } from "react";
 import { Button, Container, Form, FormControl, FormGroup, FormLabel, FormSelect, FormText } from "react-bootstrap";
 import SelectColor from "./SelectColor";
 const PlayerForm = (props) => {

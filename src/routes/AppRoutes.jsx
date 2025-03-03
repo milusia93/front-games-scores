@@ -8,6 +8,7 @@ import SingleGame from "../views/SingleGame";
 import AddNewGameSession from "../views/AddNewGameSession";
 import SingleGameSession from "../views/SingleGameSession";
 import Statistics from "../views/Statistics";
+import AddGame from "../views/AddGame";
 
 
 const AppRoutes = () => {
@@ -19,6 +20,7 @@ const AppRoutes = () => {
             <Route path="/players/add" element={<AddPlayer />} />
             <Route path="/players/:id" element={<SinglePayer />} />
             <Route path="/games" element={<Games />} />
+            <Route path="/games/add" element={<AddGame />} />
             <Route path="/games/:id" element={<SingleGame />} />
             <Route path="/gamesessions/add" element={<AddNewGameSession />} />
             <Route path="/gamesessions/:id" element={<SingleGameSession />} />
