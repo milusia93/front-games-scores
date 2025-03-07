@@ -1,4 +1,4 @@
-import { Container, Form, FormControl, FormGroup, FormLabel, FormText } from "react-bootstrap";
+import { Button, Container, Form, FormControl, FormGroup, FormLabel, FormText } from "react-bootstrap";
 import CheckGenres from "./CheckGenres";
 
 const GameForm = (props) => {
@@ -15,7 +15,10 @@ const GameForm = (props) => {
                     <FormControl type="text" name="numplayers" value={props.addedGame.numplayers} onChange={props.handleInputChange}></FormControl>
                     <FormText>Podaj maksymalną liczbę graczy</FormText>
                 </FormGroup>
-                <CheckGenres values={props.choicesGenres} handleInputChange={props.handleInputChange} checkedValues={props.addedGame.genres} />
+                <CheckGenres values={props.choicesGenres} handleGenresCheck={props.handleGenresCheck} checkedValues={props.addedGame.genres} />
+                <Button variant="primary" type="submit">
+                    Zatwierdź
+                </Button>
             </Form>
         </Container>
     )
