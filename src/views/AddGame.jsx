@@ -12,12 +12,14 @@ const AddGame = () => {
         name: "",
         numplayers: "",
         genres: [],
+        file: ""
     })
 
     const [errors, setErrors] = useState({
         name: "",
         numplayers: "",
         genres: "",
+        file: ""
     })
 
     const handleInputChange = (e) => {
@@ -30,7 +32,13 @@ const AddGame = () => {
         });
     }
 
-  
+    const handleFileChange = (e) => {
+        setAddedGame({
+            ...addedGame,
+            file: e.target.files[0],
+        });
+    };
+
 
     const handleGenresCheck = (e) => {
         console.log(e.target.value);
@@ -39,16 +47,18 @@ const AddGame = () => {
         if (isTargetInState) {
             setAddedGame({
                 ...addedGame,
-                genres:addedGame.genres.filter((g) => g !== value)
+                genres: addedGame.genres.filter((g) => g !== value)
             });
         } else {
-            setAddedGame({ ...addedGame, genres: [ ...addedGame.genres, value ]});
+            setAddedGame({ ...addedGame, genres: [...addedGame.genres, value] });
         }
     };
 
     const saveGame = (gameObj) => {
         axios
-            .post(config.api.url + "/games/add", gameObj, {mode: "cors"})
+            .post(config.api.url + "/games/add", gameObj, {
+                headers: { "Content-Type": "multipart/form-data" },
+            })
             .then((res) => {
                 console.log(res);
             })
@@ -57,31 +67,38 @@ const AddGame = () => {
             });
     }
 
-    
+
     const resetForm = () => {
         setAddedGame({
             name: "",
             numplayers: "",
             genres: [],
+            file: null,
         });
 
         setErrors({
             name: "",
             numplayers: "",
             genres: "",
+            file: "",
         });
     }
 
     const handleSubmit = (e) => {
         console.log("gra dodana")
         e.preventDefault()
+        const formData = new FormData();
+        formData.append("name", addedGame.name);
+        formData.append("numplayers", addedGame.numplayers);
+        formData.append("genres", addedGame.genres);
+        formData.append("file", addedGame.file);
         saveGame(addedGame)
         resetForm()
     };
 
     console.log(addedGame)
     return (
-        <GameForm handleGenresCheck={handleGenresCheck} addedGame={addedGame} handleInputChange={handleInputChange} handleSubmit={handleSubmit} choicesGenres={choicesGenres}/>
+        <GameForm handleFileChange={handleFileChange} handleGenresCheck={handleGenresCheck} addedGame={addedGame} handleInputChange={handleInputChange} handleSubmit={handleSubmit} choicesGenres={choicesGenres} />
     )
 }
 export default AddGame;

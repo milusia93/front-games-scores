@@ -15,6 +15,16 @@ const GameForm = (props) => {
                     <FormControl type="text" name="numplayers" value={props.addedGame.numplayers} onChange={props.handleInputChange}></FormControl>
                     <FormText>Podaj maksymalną liczbę graczy</FormText>
                 </FormGroup>
+                <FormGroup className="mb-3">
+                          <FormLabel>Image</FormLabel>
+                          <FormControl
+                            type="file"
+                            name="file"
+                            onChange={props.handleFileChange}
+                            // value={props.addedGame.file}
+                          />
+                          <FormText id="emailHelp">Obraz dla gry</FormText>
+                        </FormGroup>
                 <CheckGenres values={props.choicesGenres} handleGenresCheck={props.handleGenresCheck} checkedValues={props.addedGame.genres} />
                 <Button variant="primary" type="submit">
                     Zatwierdź

@@ -16,13 +16,23 @@ const PlayerForm = (props) => {
           <FormControl type="email" name="email" value={props.addedPlayer.email} onChange={props.handleInputChange} />
           <FormText id="emailHelp">Nie będziemy dzielić się Twoim adresem email.</FormText>
         </FormGroup>
+        <FormGroup className="mb-3">
+          <FormLabel>Image</FormLabel>
+          <FormControl
+            type="file"
+            name="file"
+            onChange={props.handleFileChange}
+            // value={props.addedPlayer.file}
+          />
+          <FormText id="emailHelp">Twój avatar</FormText>
+        </FormGroup>
         {/* <div className="mb-3">
           <label htmlFor="player-password" className="form-label">Password</label>
           <input type="password" className="form-control" id="player-password" />
         </div> */}
         <FormGroup className="mb-3">
           <FormLabel>Kolor</FormLabel>
-          <SelectColor values={props.choicesColors} handleInputChange={props.handleInputChange} selectedValue={props.addedPlayer.color}/>
+          <SelectColor values={props.choicesColors} handleInputChange={props.handleInputChange} selectedValue={props.addedPlayer.color} />
         </FormGroup>
         <Button variant="primary" type="submit">
           Zatwierdź

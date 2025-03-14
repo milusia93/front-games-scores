@@ -8,37 +8,53 @@ const choicesColors = [
     ['', 'Wybierz swój kolor...'],
     ['red', 'czerwony'],
     ['blue', 'niebieski'],
-    ['green', 'zielony']
-  ]
-  
+    ['green', 'zielony'],
+    ['yellow', 'żółty'],
+    ['pink', 'różowy'],
+    ['purple', 'fioletowy'],
+    ['gray', 'szary'],
+]
+
 const AddPlayer = () => {
 
     const [addedPlayer, setAddedPlayer] = useState({
         name: "",
         email: "",
-        color: ""
+        color: "",
+        file: "",
     })
 
     const [errors, setErrors] = useState({
         name: "",
         email: "",
-        color: ""
+        color: "",
+        file: "",
     })
-     
+
     const handleInputChange = (e) => {
         const target = e.target;
         const name = target.name;
-        
+
         setAddedPlayer({
             ...addedPlayer,
             [name]: target.value,
         });
     }
 
+    const handleFileChange = (e) => {
+        setAddedPlayer({
+            ...addedPlayer,
+            file: e.target.files[0],
+        });
+    };
+
+
 
     const savePlayer = (playerObj) => {
         axios
-            .post(config.api.url + "/players/add", playerObj, {mode: "cors"})
+            .post(config.api.url + "/players/add", playerObj, {
+                headers: { "Content-Type": "multipart/form-data" },
+            })
             .then((res) => {
                 console.log(res);
             })
@@ -51,17 +67,25 @@ const AddPlayer = () => {
         setAddedPlayer({
             name: "",
             email: "",
-            color: ""
+            color: "",
+            file: "",
         });
         setErrors({
             name: "",
             email: "",
-            color: ""
+            color: "",
+            file: "",
         })
     }
 
     const handleSubmit = (e) => {
         e.preventDefault()
+        const formData = new FormData();
+        formData.append("file", addedPlayer.file);
+        formData.append("email", addedPlayer.email);
+        formData.append("name", addedPlayer.name);
+        formData.append("color", addedPlayer.color);
+    
         savePlayer(addedPlayer)
         resetForm()
     }
@@ -75,7 +99,7 @@ const AddPlayer = () => {
 
     console.log(addedPlayer)
     return (
-        <PlayerForm addedPlayer={addedPlayer} handleInputChange={handleInputChange} handleSubmit={handleSubmit} choicesColors={choicesColors}/>
+        <PlayerForm addedPlayer={addedPlayer} handleInputChange={handleInputChange} handleSubmit={handleSubmit} choicesColors={choicesColors}  handleFileChange={handleFileChange}/>
     )
 }
 export default AddPlayer
