@@ -73,7 +73,7 @@ const AddGame = () => {
             name: "",
             numplayers: "",
             genres: [],
-            file: null,
+            file: "",
         });
 
         setErrors({

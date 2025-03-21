@@ -1,7 +1,7 @@
 import axios from "axios";
 import config from "../config";
 import { useEffect, useState } from "react";
-import { Card, Container } from "react-bootstrap";
+import { Button, Card, Container } from "react-bootstrap";
 import { PersonFill } from "react-bootstrap-icons";
 import "./Players.css";
 
@@ -45,6 +45,7 @@ const Players = () => {
                   </div>
                 )}
               </div>
+              <Button href={`/players/${player._id}`}>Szczegóły</Button>
             </Card.Body>
           </Card>
         );
