@@ -1,9 +1,10 @@
 import axios from "axios";
 import config from "../config";
 import { useEffect, useState } from "react";
-import { Button, Card, Container } from "react-bootstrap";
+import { Card, Container } from "react-bootstrap";
 import { PersonFill } from "react-bootstrap-icons";
 import "./Players.css";
+import { Link } from "react-router";
 
 const Players = () => {
   const [players, setPlayers] = useState([]);
@@ -45,7 +46,7 @@ const Players = () => {
                   </div>
                 )}
               </div>
-              <Button href={`/players/${player._id}`}>Szczegóły</Button>
+              <Link className="btn btn-primary" to={`/players/${player._id}`}>Szczegóły</Link>
             </Card.Body>
           </Card>
         );

@@ -1,5 +1,6 @@
 import { Container, Nav, Navbar } from "react-bootstrap";
 import "./AppNav.css";
+import { Link } from "react-router";
 
 const AppNav = () => {
     return (<div>
@@ -9,13 +10,13 @@ const AppNav = () => {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav" >
                     <Nav className="me-auto">
-                        <Nav.Link href="/">Start</Nav.Link>
-                        <Nav.Link href="/players">Gracze</Nav.Link>
-                        <Nav.Link href="/players/add">Dodaj gracza</Nav.Link>
-                        <Nav.Link href="/games">Gry</Nav.Link>
-                        <Nav.Link href="/games/add">Dodaj grę</Nav.Link>
-                        <Nav.Link href="/gamesessions/add">Zagraj</Nav.Link>
-                        <Nav.Link href="/statistics">Statystyki</Nav.Link>
+                        <Nav.Link as={Link} to="/">Start</Nav.Link>
+                        <Nav.Link as={Link} to="/players">Gracze</Nav.Link>
+                        <Nav.Link as={Link} to="/players/add">Dodaj gracza</Nav.Link>
+                        <Nav.Link as={Link} to="/games">Gry</Nav.Link>
+                        <Nav.Link as={Link} to="/games/add">Dodaj grę</Nav.Link>
+                        <Nav.Link as={Link} to="/gamesessions/add">Zagraj</Nav.Link>
+                        <Nav.Link as={Link} to="/statistics">Statystyki</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Container>

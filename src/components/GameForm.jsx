@@ -21,7 +21,7 @@ const GameForm = (props) => {
                             type="file"
                             name="file"
                             onChange={props.handleFileChange}
-                            // value={props.addedGame.file}
+                            ref={props.fileInputRef}
                           />
                           <FormText id="emailHelp">Obraz dla gry</FormText>
                         </FormGroup>

@@ -22,7 +22,7 @@ const PlayerForm = (props) => {
             type="file"
             name="file"
             onChange={props.handleFileChange}
-            // value={props.addedPlayer.file}
+            ref={props.fileInputRef}
           />
           <FormText id="emailHelp">Twój avatar</FormText>
         </FormGroup>

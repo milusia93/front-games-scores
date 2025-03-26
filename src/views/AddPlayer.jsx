@@ -1,7 +1,9 @@
 import axios from "axios";
 import config from "../config";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PlayerForm from "../components/PlayerForm"
+import { useParams } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 
 const choicesColors = [
@@ -17,6 +19,10 @@ const choicesColors = [
 
 const AddPlayer = () => {
 
+    const params = useParams()
+    const id = params.id
+    const navigate = useNavigate();
+
     const [addedPlayer, setAddedPlayer] = useState({
         name: "",
         email: "",
@@ -30,6 +36,29 @@ const AddPlayer = () => {
         color: "",
         file: "",
     })
+
+    useEffect(() => {
+        const getSinglePlayer = () => {
+            axios
+                .get(config.api.url + `/players/${id}`)
+                .then((res) => {
+                    setAddedPlayer(res.data);
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        }
+        if (id) {
+            getSinglePlayer();
+          }
+      
+          return () => {
+              resetForm()
+          }
+    }, [id])
+
+    const fileInputRef = useRef(null);
+    
 
     const handleInputChange = (e) => {
         const target = e.target;
@@ -57,11 +86,27 @@ const AddPlayer = () => {
             })
             .then((res) => {
                 console.log(res);
+                fileInputRef.current.value = null
             })
             .catch((err) => {
                 console.error(err)
             });
     }
+  
+    const updatePlayer = (playerObj) => {
+
+        axios
+          .put(config.api.url + `/players/update/${id}`, playerObj, {
+            headers: { "Content-Type": "multipart/form-data" },
+          })
+          .then((res) => {
+            navigate(`/players/${id}`);
+            console.log(res);
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      };
 
     const resetForm = () => {
         setAddedPlayer({
@@ -81,13 +126,22 @@ const AddPlayer = () => {
     const handleSubmit = (e) => {
         e.preventDefault()
         const formData = new FormData();
-        formData.append("file", addedPlayer.file);
+        if (addedPlayer.file) { 
+            formData.append("file", addedPlayer.file);
+        }
         formData.append("email", addedPlayer.email);
         formData.append("name", addedPlayer.name);
         formData.append("color", addedPlayer.color);
     
-        savePlayer(addedPlayer)
-        resetForm()
+        console.log(id, addedPlayer)
+        if (id) {
+            updatePlayer(formData);
+            
+          } else {
+            savePlayer(formData);
+            resetForm();
+          }
+     
     }
 
     // const validateForm = (e) => {
@@ -99,7 +153,7 @@ const AddPlayer = () => {
 
     console.log(addedPlayer)
     return (
-        <PlayerForm addedPlayer={addedPlayer} handleInputChange={handleInputChange} handleSubmit={handleSubmit} choicesColors={choicesColors}  handleFileChange={handleFileChange}/>
+        <PlayerForm addedPlayer={addedPlayer} handleInputChange={handleInputChange} handleSubmit={handleSubmit} choicesColors={choicesColors}  handleFileChange={handleFileChange} fileInputRef={fileInputRef}/>
     )
 }
 export default AddPlayer

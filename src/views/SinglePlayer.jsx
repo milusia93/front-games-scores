@@ -2,15 +2,18 @@ import axios from "axios";
 import config from "../config";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Card, Container } from "react-bootstrap";
+import { Button, Card, Container } from "react-bootstrap";
 import { PersonFill } from "react-bootstrap-icons";
 import "./SinglePlayer.css";
+import { useNavigate } from "react-router";
+import { Link } from "react-router";
 
 const SinglePlayer = () => {
 
     const [player, setPlayer] = useState(null)
     const params = useParams();
     const id = params.id
+    const navigate = useNavigate();
 
     const getSinglePlayer = () => {
         axios
@@ -27,9 +30,32 @@ const SinglePlayer = () => {
         getSinglePlayer();
 
     }, [id])
+    
+    if(!player) {
+        return <h2>Loading...</h2>
+    }
 
+    const deletePlayer = (playerId) => {
+        if (player.gamesPlayed && player.gamesPlayed.length > 0) {
+            alert("Nie można usunąć gracza, ponieważ brał udział w rozgrywkach.");
+            return;
+        }
+
+        if (window.confirm("Usunąć gracza?")) {
+            axios
+                .delete(config.api.url + "/players/delete/" + playerId, { mode: "cors" })
+                .then(() => {
+                    navigate("/players");
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        }
+    };
+console.log(player)
     return (
         <div>
+            
             <Container>
                 <h1>Player</h1>
                 <Card key={player._id} className="mb-2">
@@ -49,6 +75,8 @@ const SinglePlayer = () => {
                                 </div>
                             )}
                         </div>
+                        <Link className="btn btn-primary" to={`/players/update/${player._id}`}>Edytuj</Link>
+                        <Button onClick={()=>{deletePlayer(player._id)}}>Usuń Gracza</Button>
                     </Card.Body>
                 </Card>
             </Container>

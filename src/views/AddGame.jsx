@@ -1,6 +1,6 @@
 import axios from "axios"
 import config from "../config";
-import { useState } from "react"
+import { useRef, useState } from "react";
 import GameForm from "../components/GameForm"
 
 
@@ -21,6 +21,8 @@ const AddGame = () => {
         genres: "",
         file: ""
     })
+
+    const fileInputRef = useRef(null);
 
     const handleInputChange = (e) => {
         const target = e.target;
@@ -61,6 +63,7 @@ const AddGame = () => {
             })
             .then((res) => {
                 console.log(res);
+                fileInputRef.current.value = null
             })
             .catch((err) => {
                 console.error(err)
@@ -98,7 +101,7 @@ const AddGame = () => {
 
     console.log(addedGame)
     return (
-        <GameForm handleFileChange={handleFileChange} handleGenresCheck={handleGenresCheck} addedGame={addedGame} handleInputChange={handleInputChange} handleSubmit={handleSubmit} choicesGenres={choicesGenres} />
+        <GameForm handleFileChange={handleFileChange} handleGenresCheck={handleGenresCheck} addedGame={addedGame} handleInputChange={handleInputChange} handleSubmit={handleSubmit} choicesGenres={choicesGenres} fileInputRef={fileInputRef}/>
     )
 }
 export default AddGame;
