@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import PlayerForm from "../components/PlayerForm"
 import { useParams } from "react-router";
 import { useNavigate } from "react-router-dom";
+import { Alert, Container } from "react-bootstrap";
 
 
 const choicesColors = [
@@ -36,6 +37,7 @@ const AddPlayer = () => {
         color: "",
         file: "",
     })
+    const [message, setMessage] = useState([])
 
     useEffect(() => {
         const getSinglePlayer = () => {
@@ -50,15 +52,15 @@ const AddPlayer = () => {
         }
         if (id) {
             getSinglePlayer();
-          }
-      
-          return () => {
-              resetForm()
-          }
+        }
+
+        return () => {
+            resetForm()
+        }
     }, [id])
 
     const fileInputRef = useRef(null);
-    
+
 
     const handleInputChange = (e) => {
         const target = e.target;
@@ -80,33 +82,48 @@ const AddPlayer = () => {
 
 
     const savePlayer = (playerObj) => {
+        setMessage([]);
         axios
             .post(config.api.url + "/players/add", playerObj, {
                 headers: { "Content-Type": "multipart/form-data" },
             })
             .then((res) => {
-                console.log(res);
-                fileInputRef.current.value = null
+                console.log("Dodano gracza:", res.data);
+                fileInputRef.current.value = null;
+                setMessage([]);
+                resetForm();
             })
             .catch((err) => {
-                console.error(err)
+                if (err.response && err.response.status === 409) {
+                    const data = err.response.data;
+                    const messages = [];
+                    if (data.message?.name) {
+                        messages.push(...data.message.name);
+                    }
+                    if (data.message?.email) {
+                        messages.push(...data.message.email);
+                    }
+                    setMessage(messages.length ? messages : ["Nieznany błąd"]);
+                } else {
+                    console.error("Inny błąd:", err);
+                }
             });
-    }
-  
+    };
+
     const updatePlayer = (playerObj) => {
 
         axios
-          .put(config.api.url + `/players/update/${id}`, playerObj, {
-            headers: { "Content-Type": "multipart/form-data" },
-          })
-          .then((res) => {
-            navigate(`/players/${id}`);
-            console.log(res);
-          })
-          .catch((err) => {
-            console.error(err);
-          });
-      };
+            .put(config.api.url + `/players/update/${id}`, playerObj, {
+                headers: { "Content-Type": "multipart/form-data" },
+            })
+            .then((res) => {
+                navigate(`/players/${id}`);
+                console.log(res);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    };
 
     const resetForm = () => {
         setAddedPlayer({
@@ -123,37 +140,106 @@ const AddPlayer = () => {
         })
     }
 
+
+
+  
+    const validateForm = () => {
+        let hasErrors = false;
+
+        if (addedPlayer.name.trim() === "") {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                name: "Wpisz nazwę użytkownika.",
+            }));
+            hasErrors = true;
+        } else {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                name: "",
+            }));
+        }
+
+        if (addedPlayer.email.trim() === "") {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                email: "Wpisz email.",
+            }));
+            hasErrors = true;
+        } else if (!/\S+@\S+\.\S+/.test(addedPlayer.email)) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                email: "Wpisz poprawny adres email.",
+            }));
+            hasErrors = true;
+        } else {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                email: "",
+            }));
+        }
+
+        if (addedPlayer.color === "") {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                color: "Wybierz kolor.",
+            }));
+            hasErrors = true;
+        } else {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                color: "",
+            }));
+        }
+
+        // if (!addedPlayer.file) {
+        //     setErrors((prevErrors) => ({
+        //         ...prevErrors,
+        //         file: "Wybierz avatar.",
+        //     }));
+        //     hasErrors = true;
+        // } else {
+        //     setErrors((prevErrors) => ({
+        //         ...prevErrors,
+        //         file: "",
+        //     }));
+        // }
+
+        return hasErrors; 
+    };
+    
     const handleSubmit = (e) => {
-        e.preventDefault()
+        e.preventDefault();
+        if (validateForm()) {
+            return; 
+        }
+
         const formData = new FormData();
-        if (addedPlayer.file) { 
+        formData.append("name", addedPlayer.name);
+        formData.append("email", addedPlayer.email);
+        formData.append("color", addedPlayer.color);
+        if (addedPlayer.file) {
             formData.append("file", addedPlayer.file);
         }
-        formData.append("email", addedPlayer.email);
-        formData.append("name", addedPlayer.name);
-        formData.append("color", addedPlayer.color);
-    
-        console.log(id, addedPlayer)
-        if (id) {
-            updatePlayer(formData);
-            
-          } else {
-            savePlayer(formData);
-            resetForm();
-          }
-     
-    }
 
-    // const validateForm = (e) => {
-    //     e.preventDefault()
-    //     console.log(addedPlayer)
-    //     savePlayer()
-    //     resetForm()
-    // }
+        if (id) {
+            updatePlayer(formData); 
+        } else {
+            savePlayer(formData); 
+        }
+    };
 
     console.log(addedPlayer)
     return (
-        <PlayerForm addedPlayer={addedPlayer} handleInputChange={handleInputChange} handleSubmit={handleSubmit} choicesColors={choicesColors}  handleFileChange={handleFileChange} fileInputRef={fileInputRef}/>
-    )
+        <div>
+            <Container>
+                {message.length > 0 && (
+                    <Alert variant="danger">
+                        {message[0]}
+                    </Alert>
+                )}
+            </Container>
+
+            <PlayerForm addedPlayer={addedPlayer} handleInputChange={handleInputChange} handleSubmit={handleSubmit} choicesColors={choicesColors} handleFileChange={handleFileChange} fileInputRef={fileInputRef} errors={errors}/>
+        </div>)
 }
 export default AddPlayer
