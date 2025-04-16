@@ -37,7 +37,7 @@ const AddPlayer = () => {
         color: "",
         file: "",
     })
-    const [message, setMessage] = useState([])
+    const [message, setMessage] = useState("")
 
     useEffect(() => {
         const getSinglePlayer = () => {
@@ -45,6 +45,7 @@ const AddPlayer = () => {
                 .get(config.api.url + `/players/${id}`)
                 .then((res) => {
                     setAddedPlayer(res.data);
+                    console.log(addedPlayer)
                 })
                 .catch((err) => {
                     console.error(err);
@@ -82,7 +83,7 @@ const AddPlayer = () => {
 
 
     const savePlayer = (playerObj) => {
-        setMessage([]);
+        setMessage("");
         axios
             .post(config.api.url + "/players/add", playerObj, {
                 headers: { "Content-Type": "multipart/form-data" },
@@ -90,22 +91,17 @@ const AddPlayer = () => {
             .then((res) => {
                 console.log("Dodano gracza:", res.data);
                 fileInputRef.current.value = null;
-                setMessage([]);
+                setMessage("");
                 resetForm();
             })
             .catch((err) => {
                 if (err.response && err.response.status === 409) {
                     const data = err.response.data;
-                    const messages = [];
-                    if (data.message?.name) {
-                        messages.push(...data.message.name);
-                    }
-                    if (data.message?.email) {
-                        messages.push(...data.message.email);
-                    }
-                    setMessage(messages.length ? messages : ["Nieznany błąd"]);
+                    const message = data.message || "Nieznany błąd";  
+                    setMessage(message);  
                 } else {
                     console.error("Inny błąd:", err);
+                    setMessage("Wystąpił błąd serwera.");
                 }
             });
     };
@@ -121,7 +117,14 @@ const AddPlayer = () => {
                 console.log(res);
             })
             .catch((err) => {
-                console.error(err);
+                if (err.response && err.response.status === 409) {
+                    const data = err.response.data;
+                    const message = data.message || "Nieznany błąd";  
+                    setMessage(message);  
+                } else {
+                    console.error("Inny błąd:", err);
+                    setMessage("Wystąpił błąd serwera.");
+                }
             });
     };
 
@@ -230,16 +233,23 @@ const AddPlayer = () => {
 
     console.log(addedPlayer)
     return (
-        <div>
-            <Container>
-                {message.length > 0 && (
-                    <Alert variant="danger">
-                        {message[0]}
-                    </Alert>
-                )}
-            </Container>
+    <Container>
+       {message && message.length > 0 && (
+                <Alert variant="danger">
+                    {message}
+                </Alert>
+            )}
 
-            <PlayerForm addedPlayer={addedPlayer} handleInputChange={handleInputChange} handleSubmit={handleSubmit} choicesColors={choicesColors} handleFileChange={handleFileChange} fileInputRef={fileInputRef} errors={errors}/>
-        </div>)
+      <PlayerForm
+        addedPlayer={addedPlayer}
+        handleInputChange={handleInputChange}
+        handleSubmit={handleSubmit}
+        choicesColors={choicesColors}
+        handleFileChange={handleFileChange}
+        fileInputRef={fileInputRef}
+        errors={errors}
+      />
+    </Container>
+  );
 }
 export default AddPlayer
