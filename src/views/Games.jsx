@@ -32,7 +32,9 @@ const Games = () => {
                     <Card key={game._id} className="mb-2">
                         <Card.Header>{game.name}</Card.Header>
                         <Card.Body>
-                            <p>Maksymalna ilość graczy: {game.numplayers}</p>
+                            <p>Liczba graczy: {game.minnumplayers === game.maxnumplayers
+                                    ? game.minnumplayers
+                                    : `${game.minnumplayers} - ${game.maxnumplayers}`}</p>
                             <p>Gatunki: {game.genres.join(', ')}</p>
                             <div className="gameIconWrapper">
                                 Image:{" "}

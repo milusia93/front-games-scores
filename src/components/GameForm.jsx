@@ -33,21 +33,35 @@ const GameForm = (props) => {
                 <FormGroup className="mb-3">
                     <FormLabel>Nazwa gry</FormLabel>
                     <FormControl type="text" name="name" value={props.addedGame.name} onChange={props.handleInputChange}></FormControl>
-                    {/* <FormText>Podaj nazwę gry</FormText> */}
                     {props.errors.name && <p className="warning">{props.errors.name}</p>}
                 </FormGroup>
                 <FormGroup className="mb-3">
-                    <FormLabel>Maksymalna liczba graczy</FormLabel>
-                    <FormControl as="select" name="numplayers" value={props.addedGame.numplayers} onChange={props.handleInputChange}>
-                        <option value="">Wybierz liczbę graczy</option>
+                    <FormLabel>Minimalna liczba graczy</FormLabel>
+                    <FormControl as="select" name="minnumplayers" value={props.addedGame.minnumplayers} onChange={props.handleInputChange}>
+                        <option value="">Wybierz minimalną liczbę graczy</option>
                         {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
                             <option key={num} value={num}>
                                 {num}
                             </option>
                         ))}
                     </FormControl>
-                    {/* <FormText>Podaj maksymalną liczbę graczy</FormText> */}
-                    {props.errors.numplayers && <p className="warning">{props.errors.numplayers}</p>}
+                    {props.errors.minnumplayers && <p className="warning">{props.errors.minnumplayers}</p>}
+                </FormGroup>
+                <FormGroup className="mb-3">
+                    <FormLabel>Maksymalna liczba graczy</FormLabel>
+                    <FormControl as="select" name="maxnumplayers" value={props.addedGame.maxnumplayers} onChange={props.handleInputChange} disabled={!props.addedGame.minnumplayers}>
+                    <option value="">Wybierz maksymalną liczbę graczy</option>
+                        {props.addedGame.minnumplayers &&
+                            Array.from(
+                                { length: 10 - props.addedGame.minnumplayers + 1 },
+                                (_, i) => i + props.addedGame.minnumplayers
+                            ).map((num) => (
+                                <option key={num} value={num}>
+                                    {num}
+                                </option>
+                        ))}
+                    </FormControl>
+                    {props.errors.maxnumplayers && <p className="warning">{props.errors.maxnumplayers}</p>}
                 </FormGroup>
                 <FormGroup className="mb-3">
                     <FormLabel>Grafika dla gry</FormLabel>
@@ -57,7 +71,6 @@ const GameForm = (props) => {
                         onChange={props.handleFileChange}
                         ref={props.fileInputRef}
                     />
-                    {/* <FormText id="emailHelp">Obraz dla gry</FormText> */}
                     {props.errors.file && <p className="warning">{props.errors.file}</p>}
                     {renderImagePreview()}
                 </FormGroup>

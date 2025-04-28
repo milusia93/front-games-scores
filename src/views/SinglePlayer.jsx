@@ -15,18 +15,19 @@ const SinglePlayer = () => {
     const id = params.id
     const navigate = useNavigate();
 
-    const getSinglePlayer = () => {
-        axios
-            .get(config.api.url + `/players/${id}`)
-            .then((res) => {
-                setPlayer(res.data);
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    }
 
     useEffect(() => {
+        const getSinglePlayer = () => {
+            axios
+                .get(config.api.url + `/players/${id}`)
+                .then((res) => {
+                    setPlayer(res.data);
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        }
+
         getSinglePlayer();
 
     }, [id])

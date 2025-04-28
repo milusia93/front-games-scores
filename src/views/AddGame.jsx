@@ -17,14 +17,16 @@ const AddGame = () => {
 
     const [addedGame, setAddedGame] = useState({
         name: "",
-        numplayers: 0,
+        minnumplayers: 0,
+        maxnumplayers: 0,
         genres: [],
         file: ""
     })
 
     const [errors, setErrors] = useState({
         name: "",
-        numplayers: "",
+        minnumplayers: "",
+        maxnumplayers: "",
         genres: "",
         file: ""
     })
@@ -37,7 +39,6 @@ const AddGame = () => {
                 .get(config.api.url + `/games/${id}`)
                 .then((res) => {
                     setAddedGame(res.data);
-                    console.log(addedGame)
                 })
                 .catch((err) => {
                     console.error(err);
@@ -55,16 +56,24 @@ const AddGame = () => {
         const target = e.target;
         const name = target.name;
         let value = target.value;
-
-        if (name === "numplayers") {
+    
+        if (name === "minnumplayers" || name === "maxnumplayers") {
             value = Number(value); 
         }
-
-        setAddedGame({
-            ...addedGame,
-            [name]: value,
-        });
-    }
+    
+        if (name === "minnumplayers") {
+            setAddedGame({
+                ...addedGame,
+                [name]: value,
+                maxnumplayers: "", 
+            });
+        } else {
+            setAddedGame({
+                ...addedGame,
+                [name]: value,
+            });
+        }
+    };
 
     const handleFileChange = (e) => {
         setAddedGame({
@@ -75,9 +84,10 @@ const AddGame = () => {
 
 
     const handleGenresCheck = (e) => {
-        console.log(e.target.value);
+
         const value = e.target.value;
         const isTargetInState = addedGame.genres.includes(value);
+
         if (isTargetInState) {
             setAddedGame({
                 ...addedGame,
@@ -89,16 +99,15 @@ const AddGame = () => {
     };
 
     const saveGame = (gameObj) => {
-        console.log("wysyłam grę") 
+
         axios
             .post(config.api.url + "/games/add", gameObj, {
                 headers: { "Content-Type": "multipart/form-data" },
             })
             .then((res) => {
-                console.log("Dodano grę:", res.data);
                 fileInputRef.current.value = null;
                 setMessage("");
-                resetForm();
+                navigate("/games");
             })
             .catch((err) => {
                 if (err.response && err.response.status === 409) {
@@ -112,21 +121,39 @@ const AddGame = () => {
             });
     }
 
+    const updateGame = (gameObj) => {
+        axios
+            .put(config.api.url + `/games/update/${id}`, gameObj, {
+                headers: { "Content-Type": "multipart/form-data" },
+            })
+            .then((res) => {
+                navigate("/games");
+            })
+            .catch((err) => {
+                console.error("Błąd aktualizacji:", err);
+                setMessage("Wystąpił błąd podczas aktualizacji gry.");
+            });
+    }
+
 
     const resetForm = () => {
         setAddedGame({
             name: "",
-            numplayers: 0,
+            minnumplayers: 0,
+            maxnumplayers: 0,
             genres: [],
             file: "",
         });
 
         setErrors({
             name: "",
-            numplayers: "",
+            minnumplayers: "",
+            maxnumplayers: "",
             genres: "",
             file: "",
         });
+
+        setMessage("");
     }
 
     const validateForm = () => {
@@ -147,25 +174,40 @@ const AddGame = () => {
             }));
         }
     
-        // Walidacja liczby graczy (numplayers)
-        if (addedGame.numplayers === 0) { // Sprawdzamy, czy liczba graczy to 0
+            // Walidacja liczby graczy (minnumplayers)
+        if (addedGame.minnumplayers <= 0 || isNaN(addedGame.minnumplayers)) {
             setErrors((prevErrors) => ({
                 ...prevErrors,
-                numplayers: "Wybierz liczbę graczy większą niż 0.",
+                minnumplayers: "Wpisz poprawną liczbę graczy większą niż 0.",
             }));
-            console.log("Za mała liczba graczy");
+            console.log("Błędna liczba minimalnych graczy");
             hasErrors = true;
-        } else if (isNaN(addedGame.numplayers) || addedGame.numplayers <= 0) {
+        } else {
             setErrors((prevErrors) => ({
                 ...prevErrors,
-                numplayers: "Wpisz poprawną liczbę graczy.",
+                minnumplayers: "",
+            }));
+        }
+
+        // Walidacja liczby graczy (maxnumplayers)
+        if (addedGame.maxnumplayers <= 0 || isNaN(addedGame.maxnumplayers)) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                maxnumplayers: "Wpisz poprawną liczbę graczy większą niż 0.",
+            }));
+            console.log("Błędna liczba maksymalnych graczy");
+            hasErrors = true;
+        } else if (addedGame.maxnumplayers < addedGame.minnumplayers) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                maxnumplayers: "Maksymalna liczba graczy musi być większa bądź równa minimalnej liczbie graczy.",
             }));
             console.log("Błędna liczba graczy");
             hasErrors = true;
         } else {
             setErrors((prevErrors) => ({
                 ...prevErrors,
-                numplayers: "",
+                maxnumplayers: "",
             }));
         }
     
@@ -188,21 +230,21 @@ const AddGame = () => {
     };
 
     const handleSubmit = (e) => {
-        console.log("gra dodana")
         e.preventDefault()
         
         if (validateForm()) {
-            console.log("Formularz ma błędy");
             return; 
         }
         const formData = new FormData();
         formData.append("name", addedGame.name);
-        formData.append("numplayers", addedGame.numplayers);
-        formData.append("genres", addedGame.genres);
+        formData.append("minnumplayers", addedGame.minnumplayers);
+        formData.append("maxnumplayers", addedGame.maxnumplayers);
+        addedGame.genres.forEach(genre => {
+            formData.append("genres[]", genre);  // używamy "genres[]" jako klucza, by wskazać, że to tablica
+        });
         if (addedGame.file) {
             formData.append("file", addedGame.file);
         }
-        console.log("Form data", formData);
         if (id) {
             updateGame(formData); 
         } else {
@@ -211,7 +253,6 @@ const AddGame = () => {
         
     };
 
-    // console.log(addedGame)
     return (
         <Container>
             {message && message.length > 0 && (
