@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, Container } from "react-bootstrap";
 import { ImageFill } from "react-bootstrap-icons";
 import "./Games.css";
+import { Link } from "react-router";
 
 const Games = () => {
     const [games, setGames] = useState([]);
@@ -45,6 +46,7 @@ const Games = () => {
                                     </div>
                                 )}
                             </div>
+                            <Link className="btn btn-primary" to={`/games/${game._id}`}>Szczegóły</Link>
                         </Card.Body>
                     </Card>
                 );

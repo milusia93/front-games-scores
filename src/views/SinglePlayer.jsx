@@ -52,7 +52,7 @@ const SinglePlayer = () => {
                 });
         }
     };
-console.log(player)
+console.log(player) 
     return (
         <div>
             

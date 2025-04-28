@@ -40,19 +40,17 @@ const AddPlayer = () => {
     const [message, setMessage] = useState("")
 
     useEffect(() => {
-        const getSinglePlayer = () => {
-            axios
-                .get(config.api.url + `/players/${id}`)
-                .then((res) => {
-                    setAddedPlayer(res.data);
-                    console.log(addedPlayer)
-                })
-                .catch((err) => {
-                    console.error(err);
-                });
-        }
+           
         if (id) {
-            getSinglePlayer();
+            axios
+            .get(config.api.url + `/players/${id}`)
+            .then((res) => {
+                setAddedPlayer(res.data);
+                console.log(addedPlayer)
+            })
+            .catch((err) => {
+                console.error(err);
+            });
         }
 
         return () => {
