@@ -16,6 +16,7 @@ const AppNav = () => {
                         <Nav.Link as={Link} to="/games">Gry</Nav.Link>
                         <Nav.Link as={Link} to="/games/add">Dodaj grę</Nav.Link>
                         <Nav.Link as={Link} to="/gamesessions/add">Zagraj</Nav.Link>
+                        <Nav.Link as={Link} to="/gamesessions">Sesje gier</Nav.Link>
                         <Nav.Link as={Link} to="/statistics">Statystyki</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>

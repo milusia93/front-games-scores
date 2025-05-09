@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Button, FormGroup, FormLabel, FormControl } from "react-bootstrap";
+import { Form, Button, FormGroup, FormLabel, FormCheck, FormControl } from "react-bootstrap";
 
 const GameSessionForm = ({
     newSession,
@@ -7,19 +7,13 @@ const GameSessionForm = ({
     players,
     errors,
     handleInputChange,
-    handlePlayersChange,
+    handlePlayerCheckboxChange,
     handleSubmit,
     sessionId,
     minnumplayers,
     maxnumplayers,
     handleGameChange,
 }) => {
-    // Tworzymy tablicę z dostępnymi opcjami liczby graczy
-    const playerOptions = [];
-    for (let i = minnumplayers; i <= maxnumplayers; i++) {
-        playerOptions.push(i);
-    }
-
     return (
         <Form onSubmit={handleSubmit}>
             <FormGroup className="mb-3">
@@ -49,25 +43,33 @@ const GameSessionForm = ({
                     onChange={handleInputChange}
                 >
                     <option value="">Wybierz liczbę graczy</option>
-                    {playerOptions.map((num) => (
-                        <option key={num} value={num}>
-                            {num}
-                        </option>
-                    ))}
+                    {minnumplayers && maxnumplayers &&
+                        Array.from({ length: maxnumplayers - minnumplayers + 1 }, (_, i) => i + minnumplayers).map((num) => (
+                            <option key={num} value={num}>
+                                {num}
+                            </option>
+                        ))}
                 </FormControl>
                 {errors.numplayers && <p className="warning">{errors.numplayers}</p>}
             </FormGroup>
 
-            <FormGroup className="mb-3">
-                <FormLabel>Wybierz graczy</FormLabel>
-                <FormControl
-                    type="text"
-                    name="players"
-                    value={newSession.players.join(",")}
-                    onChange={handlePlayersChange}
-                    placeholder="Wpisz ID graczy, oddzielone przecinkiem"
-                />
-            </FormGroup>
+            {newSession.numplayers > 0 && (
+                <FormGroup className="mb-3">
+                    <FormLabel>Wybierz graczy ({newSession.players.length}/{newSession.numplayers})</FormLabel>
+                    {players.map((player) => (
+                        <FormCheck
+                            key={player._id}
+                            type="checkbox"
+                            label={player.name}
+                            value={player._id}
+                            checked={newSession.players.includes(player._id)}
+                            onChange={(e) => handlePlayerCheckboxChange(e, player._id)}
+                            disabled={newSession.players.length >= newSession.numplayers && !newSession.players.includes(player._id)}
+                        />
+                    ))}
+                    {errors.players && <p className="warning">{errors.players}</p>}
+                </FormGroup>
+            )}
 
             <FormGroup className="mb-3">
                 <FormLabel>Data sesji</FormLabel>
@@ -103,9 +105,9 @@ const GameSessionForm = ({
                         onChange={handleInputChange}
                     >
                         <option value="">Wybierz zwycięzcę</option>
-                        {players.map((player) => (
+                        {newSession.players.map((player) => (
                             <option key={player._id} value={player._id}>
-                                {player.name}
+                                {player._id}
                             </option>
                         ))}
                     </FormControl>
