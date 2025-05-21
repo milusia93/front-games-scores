@@ -22,7 +22,7 @@ const GameSessions = () => {
             <h1>Gaming Sessions</h1>
             {gameSessions.map((session) => (
                 <Card key={session._id} className="mb-3">
-                    <Card.Header>Gra: {session.game?.name || "Nieznana gra"}</Card.Header>
+                    <Card.Header>Nazwa gry: {session.game?.name || "Nieznana gra"}</Card.Header>
                     <Card.Body>
                         <p>Liczba graczy: {session.numplayers}</p>
                         <p>Data: {new Date(session.date).toLocaleDateString()}</p>

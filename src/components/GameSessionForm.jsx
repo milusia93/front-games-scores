@@ -1,11 +1,14 @@
 import React from "react";
 import { Form, Button, FormGroup, FormLabel, FormCheck, FormControl } from "react-bootstrap";
 
+
+
 const GameSessionForm = ({
     newSession,
     games,
     players,
     errors,
+    isPastOrToday,
     handleInputChange,
     handlePlayerCheckboxChange,
     handleSubmit,
@@ -87,12 +90,16 @@ const GameSessionForm = ({
                 <FormControl
                     as="select"
                     name="finished"
-                    value={newSession.finished}
+                    value={String(newSession.finished)}
                     onChange={handleInputChange}
+                    disabled={!isPastOrToday(newSession.date)}
                 >
                     <option value={false}>Nie</option>
                     <option value={true}>Tak</option>
                 </FormControl>
+                {!isPastOrToday(newSession.date) && (
+                    <p className="warning">Nie możesz zakończyć sesji, która jeszcze się nie odbyła.</p>
+                )}
             </FormGroup>
 
             {newSession.finished && (
@@ -105,17 +112,20 @@ const GameSessionForm = ({
                         onChange={handleInputChange}
                     >
                         <option value="">Wybierz zwycięzcę</option>
-                        {newSession.players.map((player) => (
-                            <option key={player._id} value={player._id}>
-                                {player._id}
-                            </option>
-                        ))}
+                        {players
+                            .filter((p) => newSession.players.includes(p._id))
+                            .map((player) => (
+                                <option key={player._id} value={player._id}>
+                                    {player.name}
+                                </option>
+                            ))}
                     </FormControl>
+                    {errors.winner && <p className="warning">{errors.winner}</p>}
                 </FormGroup>
             )}
 
 
-            <Button variant="primary" type="submit">
+            <Button variant="primary" type="submit" disabled={newSession.players.length < newSession.numplayers}>
                 {sessionId ? "Zaktualizuj sesję" : "Dodaj sesję"}
             </Button>
         </Form>
