@@ -1,6 +1,6 @@
 import axios from "axios";
 import config from "../config";
-// import "./GameSessions.css"
+import "./GameSessions.css"
 import { useEffect, useState } from "react";
 import { Card, Container, ListGroup, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";

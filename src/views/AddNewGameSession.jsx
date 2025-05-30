@@ -6,7 +6,7 @@ import GameSessionForm from "../components/GameSessionForm";
 import config from "../config";
 
 const AddNewGameSession = () => {
-  const { sessionId } = useParams();
+
   const [newSession, setNewSession] = useState({
     game: "",
     numplayers: 0,
@@ -26,6 +26,8 @@ const AddNewGameSession = () => {
     date: "",
     winner: "",
   });
+    const params  = useParams();
+  const sessionId = params.id
 
   const [message, setMessage] = useState("");
   const [minnumplayers, setMinNumPlayers] = useState(0);
@@ -50,6 +52,8 @@ const AddNewGameSession = () => {
         .get(config.api.url + "/gamingsessions/" + sessionId)
         .then((response) => {
           setNewSession(response.data);
+          // console.log(response.data)
+          console.log(newSession)
 
           const selectedGame = games.find(
             (game) => game._id === response.data.game
@@ -283,6 +287,7 @@ const handleSubmit = (e) => {
       setMessage("Wystąpił błąd podczas zapisywania sesji gry.");
     });
 };
+
 
   return (
     <Container>
