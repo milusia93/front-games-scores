@@ -24,7 +24,7 @@ const GameSessionForm = ({
                 <FormControl
                     as="select"
                     name="game"
-                    value={newSession.game}
+                    value={newSession.game._id}
                     onChange={handleGameChange}
                 >
                     <option value="">Wybierz grę</option>
@@ -65,9 +65,14 @@ const GameSessionForm = ({
                             type="checkbox"
                             label={player.name}
                             value={player._id}
-                            checked={newSession.players.includes(player._id)}
-                            onChange={(e) => handlePlayerCheckboxChange(e, player._id)}
-                            disabled={newSession.players.length >= newSession.numplayers && !newSession.players.includes(player._id)}
+                            checked={newSession.players.some(
+                                (sessionPlayer) => sessionPlayer._id === player._id
+                            )}
+                            onChange={(e) => handlePlayerCheckboxChange(e, player)}
+                            disabled={
+                                newSession.players.length >= newSession.numplayers &&
+                                !newSession.players.find(p => p._id === player._id)
+                            }
                         />
                     ))}
                     {errors.players && <p className="warning">{errors.players}</p>}

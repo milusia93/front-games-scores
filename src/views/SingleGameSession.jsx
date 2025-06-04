@@ -49,8 +49,6 @@ const SingleGameSession = () => {
 
     }, [id])
 
-
-    console.log(gameSession)
     if (!gameSession) {
         return <h2>Loading...</h2>
     }

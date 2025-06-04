@@ -6,7 +6,6 @@ import GameSessionForm from "../components/GameSessionForm";
 import config from "../config";
 
 const AddNewGameSession = () => {
-
   const [newSession, setNewSession] = useState({
     game: "",
     numplayers: 0,
@@ -15,7 +14,6 @@ const AddNewGameSession = () => {
     finished: false,
     winner: null,
   });
-
 
   const [games, setGames] = useState([]);
   const [players, setPlayers] = useState([]);
@@ -26,7 +24,7 @@ const AddNewGameSession = () => {
     date: "",
     winner: "",
   });
-    const params  = useParams();
+  const params = useParams();
   const sessionId = params.id
 
   const [message, setMessage] = useState("");
@@ -51,12 +49,13 @@ const AddNewGameSession = () => {
       axios
         .get(config.api.url + "/gamingsessions/" + sessionId)
         .then((response) => {
-          setNewSession(response.data);
-          // console.log(response.data)
-          console.log(newSession)
+          setNewSession({
+            ...response.data,
+            date: response.data.date?.slice(0, 10), 
+          });
 
           const selectedGame = games.find(
-            (game) => game._id === response.data.game
+            (game) => game._id === response.data.game._id
           );
           if (selectedGame) {
             setMinNumPlayers(selectedGame.minnumplayers);
@@ -70,79 +69,78 @@ const AddNewGameSession = () => {
     }
   }, [sessionId, games]);
 
-const isPastOrToday = (dateString) => {
+  const isPastOrToday = (dateString) => {
     if (!dateString) return false;
     const today = new Date().toISOString().slice(0, 10); // yyyy-mm-dd
     return dateString <= today;
-};
-// const handleInputChange = (e) => {
-//   const { name, value } = e.target;
+  };
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
 
-//   if (name === "finished") {
-//     const isFinished = value === "true"; // konwersja na boolean
-//     setNewSession((prev) => ({
-//       ...prev,
-//       finished: isFinished,
-//       winner: isFinished ? prev.winner : null, // resetuj winner jeśli nie zakończono sesji
-//     }));
-//   } else {
-//     setNewSession({
-//       ...newSession,
-//       [name]: value,
-//     });
-//   }
-// };
+  //   if (name === "finished") {
+  //     const isFinished = value === "true"; // konwersja na boolean
+  //     setNewSession((prev) => ({
+  //       ...prev,
+  //       finished: isFinished,
+  //       winner: isFinished ? prev.winner : null, // resetuj winner jeśli nie zakończono sesji
+  //     }));
+  //   } else {
+  //     setNewSession({
+  //       ...newSession,
+  //       [name]: value,
+  //     });
+  //   }
+  // };
 
-const handleInputChange = (e) => {
-  const { name, value } = e.target;
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
 
-  if (name === "finished") {
-    const isFinished = value === "true"; // konwersja string → boolean
+    if (name === "finished") {
+      const isFinished = value === "true"; // konwersja string → boolean
 
-    setNewSession((prev) => ({
-      ...prev,
-      finished: isFinished,
-      winner: isFinished ? prev.winner : null, // jeśli sesja nie jest zakończona, usuń zwycięzcę
-    }));
-  } else if (name === "date") {
-    const isFutureDate = !isPastOrToday(value);
-
-    if (isFutureDate && newSession.finished === true) {
       setNewSession((prev) => ({
         ...prev,
-        date: value,
-        finished: false,
-        winner: null, // reset, bo sesja w przyszłości nie może być zakończona
+        finished: isFinished,
+        winner: isFinished ? prev.winner : null, // jeśli sesja nie jest zakończona, usuń zwycięzcę
       }));
-    } else {
-      setNewSession((prev) => ({
-        ...prev,
-        date: value,
-      }));
-    }
-  } else {
-    setNewSession((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  }
-};
+    } else if (name === "date") {
+      const isFutureDate = !isPastOrToday(value);
 
-  const handlePlayerCheckboxChange = (e, playerId) => {
-    if (e.target.checked) {
-      if (newSession.players.length < newSession.numplayers) {
+      if (isFutureDate && newSession.finished === true) {
         setNewSession((prev) => ({
           ...prev,
-          players: [...prev.players, playerId],
+          date: value,
+          finished: false,
+          winner: null, // reset, bo sesja w przyszłości nie może być zakończona
+        }));
+      } else {
+        setNewSession((prev) => ({
+          ...prev,
+          date: value,
         }));
       }
     } else {
       setNewSession((prev) => ({
         ...prev,
-        players: prev.players.filter((id) => id !== playerId),
+        [name]: value,
       }));
     }
-    console.log(newSession.players)
+  };
+
+  const handlePlayerCheckboxChange = (e, player) => {
+    if (e.target.checked) {
+      if (newSession.players.length < newSession.numplayers) {
+        setNewSession((prev) => ({
+          ...prev,
+          players: [...prev.players, player],
+        }));
+      }
+    } else {
+      setNewSession((prev) => ({
+        ...prev,
+        players: prev.players.filter(p => p._id !== player._id)
+      }));
+    }
   };
 
   const handleGameChange = (e) => {
@@ -152,7 +150,8 @@ const handleInputChange = (e) => {
     setNewSession({
       ...newSession,
       game: selectedGameId,
-      numplayers: "",
+      numplayers: 0,
+      players: [],
     });
 
     if (selectedGame) {
@@ -161,132 +160,78 @@ const handleInputChange = (e) => {
     }
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-
-
-  //   let hasErrors = false;
-  //   if (!newSession.game) {
-  //     setErrors((prev) => ({ ...prev, game: "Wybierz grę" }));
-  //     hasErrors = true;
-  //   } else {
-  //     setErrors((prev) => ({ ...prev, game: "" }));
-  //   }
-
-  //   if (newSession.numplayers < minnumplayers || newSession.numplayers > maxnumplayers) {
-  //     setErrors((prev) => ({
-  //       ...prev,
-  //       numplayers: `Liczba graczy musi mieścić się w przedziale od ${minnumplayers} do ${maxnumplayers}`,
-  //     }));
-  //     hasErrors = true;
-  //   } else {
-  //     setErrors((prev) => ({ ...prev, numplayers: "" }));
-  //   }
-
-  //   if (newSession.players.length < newSession.numplayers) {
-  //     setErrors((prev) => ({ ...prev, players: "Wybierz graczy" }));
-  //     hasErrors = true;
-  //   } else {
-  //     setErrors((prev) => ({ ...prev, players: "" }));
-  //   }
-
-  //   if (!newSession.date) {
-  //     setErrors((prev) => ({ ...prev, date: "Wybierz datę sesji" }));
-  //     hasErrors = true;
-  //   } else {
-  //     setErrors((prev) => ({ ...prev, date: "" }));
-  //   }
-
-  //   if (hasErrors) return;
-
-  //   const requestMethod = sessionId ? "put" : "post";
-  //   const requestUrl = sessionId
-  //     ? `${config.api.url}/gamingsessions/${sessionId}`
-  //     : `${config.api.url}/gamingsessions/add`;
-
-  //   axios
-  //   [requestMethod](requestUrl, newSession)
-  //     .then((res) => {
-  //       setMessage("");
-  //       navigate("/gamesessions");
-  //     })
-  //     .catch((err) => {
-  //       console.error("Błąd podczas zapisywania sesji:", err);
-  //       setMessage("Wystąpił błąd podczas zapisywania sesji gry.");
-  //     });
-  // };
-
   const validateForm = () => {
-  let hasErrors = false;
+    let hasErrors = false;
 
-  if (!newSession.game) {
-    setErrors((prev) => ({ ...prev, game: "Wybierz grę" }));
-    hasErrors = true;
-  } else {
-    setErrors((prev) => ({ ...prev, game: "" }));
-  }
+    if (!newSession.game) {
+      setErrors((prev) => ({ ...prev, game: "Wybierz grę" }));
+      hasErrors = true;
+    } else {
+      setErrors((prev) => ({ ...prev, game: "" }));
+    }
 
-  if (
-    newSession.numplayers < minnumplayers ||
-    newSession.numplayers > maxnumplayers
-  ) {
-    setErrors((prev) => ({
-      ...prev,
-      numplayers: `Liczba graczy musi mieścić się w przedziale od ${minnumplayers} do ${maxnumplayers}.`,
-    }));
-    hasErrors = true;
-  } else {
-    setErrors((prev) => ({ ...prev, numplayers: "" }));
-  }
+    if (
+      newSession.numplayers < minnumplayers ||
+      newSession.numplayers > maxnumplayers
+    ) {
+      setErrors((prev) => ({
+        ...prev,
+        numplayers: `Liczba graczy musi mieścić się w przedziale od ${minnumplayers} do ${maxnumplayers}.`,
+      }));
+      hasErrors = true;
+    } else {
+      setErrors((prev) => ({ ...prev, numplayers: "" }));
+    }
 
-  if (newSession.players.length < newSession.numplayers) {
-    setErrors((prev) => ({
-      ...prev,
-      players: "Wybierz odpowiednią liczbę graczy.",
-    }));
-    hasErrors = true;
-  } else {
-    setErrors((prev) => ({ ...prev, players: "" }));
-  }
+    if (newSession.players.length < newSession.numplayers) {
+      setErrors((prev) => ({
+        ...prev,
+        players: "Wybierz odpowiednią liczbę graczy.",
+      }));
+      hasErrors = true;
+    } else {
+      setErrors((prev) => ({ ...prev, players: "" }));
+    }
 
-  if (!newSession.date) {
-    setErrors((prev) => ({ ...prev, date: "Wybierz datę sesji." }));
-    hasErrors = true;
-  } else {
-    setErrors((prev) => ({ ...prev, date: "" }));
-  }
+    if (!newSession.date) {
+      setErrors((prev) => ({ ...prev, date: "Wybierz datę sesji." }));
+      hasErrors = true;
+    } else {
+      setErrors((prev) => ({ ...prev, date: "" }));
+    }
 
-  // NOWOŚĆ: jeśli sesja zakończona, ale nie ma winnera
-  if (newSession.finished && !newSession.winner) {
-    setErrors((prev) => ({ ...prev, winner: "Jeśli sesja jest zakończona, musisz wybrać zwycięzcę." }));
-    hasErrors = true;
-  } else {
-    setErrors((prev) => ({ ...prev, winner: "" }));
-  }
+    // NOWOŚĆ: jeśli sesja zakończona, ale nie ma winnera
+    if (newSession.finished && !newSession.winner) {
+      setErrors((prev) => ({ ...prev, winner: "Jeśli sesja jest zakończona, musisz wybrać zwycięzcę." }));
+      hasErrors = true;
+    } else {
+      setErrors((prev) => ({ ...prev, winner: "" }));
+    }
 
-  return hasErrors;
-};
+    return hasErrors;
+  };
 
-const handleSubmit = (e) => {
-  e.preventDefault();
+  const handleSubmit = (e) => {
+    console.log(newSession)
+    e.preventDefault();
 
-  if (validateForm()) return;
+    if (validateForm()) return;
 
-  const requestMethod = sessionId ? "put" : "post";
-  const requestUrl = sessionId
-    ? `${config.api.url}/gamingsessions/${sessionId}`
-    : `${config.api.url}/gamingsessions/add`;
+    const requestMethod = sessionId ? "put" : "post";
+    const requestUrl = sessionId
+      ? `${config.api.url}/gamingsessions/update/${sessionId}`
+      : `${config.api.url}/gamingsessions/add`;
 
-  axios[requestMethod](requestUrl, newSession)
-    .then((res) => {
-      setMessage("");
-      navigate("/gamesessions");
-    })
-    .catch((err) => {
-      console.error("Błąd podczas zapisywania sesji:", err);
-      setMessage("Wystąpił błąd podczas zapisywania sesji gry.");
-    });
-};
+    axios[requestMethod](requestUrl, newSession)
+      .then((res) => {
+        setMessage("");
+        navigate("/gamesessions");
+      })
+      .catch((err) => {
+        console.error("Błąd podczas zapisywania sesji:", err);
+        setMessage("Wystąpił błąd podczas zapisywania sesji gry.");
+      });
+  };
 
 
   return (
