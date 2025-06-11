@@ -1,34 +1,33 @@
-import axios from 'axios';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-} from 'chart.js';
-import { Bar } from 'react-chartjs-2';
-import config from '../config';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import config from '../config';
 
-// Rejestrujemy potrzebne komponenty Chart.js
 ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
 );
 
-// Konfiguracja wykresu
+
 const options = {
     responsive: true,
     indexAxis: 'y',
     plugins: {
         legend: {
-            position: 'top', // nie musisz pisać `as const` w czystym JS
+            position: 'top',
         },
         title: {
             display: true,
@@ -37,7 +36,7 @@ const options = {
     },
 };
 
-// Etykiety i dane
+
 const labels = ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj'];
 const data = {
     labels,
@@ -50,7 +49,7 @@ const data = {
     ],
 };
 
-// Twój komponent widoku
+
 const Statistics = () => {
     const [gameSessions, setGameSessions] = useState([]);
     const getGamingSessions = () => {
