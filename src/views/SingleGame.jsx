@@ -10,14 +10,13 @@ import "./SingleGame.css";
 
 const SingleGame = () => {
     const [game, setGame] = useState(null);
-    const params = useParams();
-    const id = params.id;
+    const { gameId } = useParams()
     const navigate = useNavigate();
 
     // Fetch the game data
     const getSingleGame = () => {
         axios
-            .get(config.api.url + `/games/${id}`)
+            .get(config.api.url + `/games/${gameId}`)
             .then((res) => {
                 setGame(res.data);
             })
@@ -28,7 +27,7 @@ const SingleGame = () => {
 
     useEffect(() => {
         getSingleGame();
-    }, [id]);
+    }, [gameId]);
 
     if (!game) {
         return <h2>Loading...</h2>;

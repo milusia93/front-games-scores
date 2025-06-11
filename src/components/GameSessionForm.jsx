@@ -24,7 +24,7 @@ const GameSessionForm = ({
                 <FormControl
                     as="select"
                     name="game"
-                    value={newSession.game._id}
+                    value={newSession.game?._id || ""}
                     onChange={handleGameChange}
                 >
                     <option value="">Wybierz grę</option>
@@ -118,7 +118,7 @@ const GameSessionForm = ({
                     >
                         <option value="">Wybierz zwycięzcę</option>
                         {players
-                            .filter((p) => newSession.players.includes(p._id))
+                            .filter((p) => newSession.players.some(sessionPlayer => sessionPlayer._id === p._id))
                             .map((player) => (
                                 <option key={player._id} value={player._id}>
                                     {player.name}

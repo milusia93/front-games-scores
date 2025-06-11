@@ -11,8 +11,8 @@ const choicesGenres = ['strategiczna', 'euro', 'kooperacyjna', 'RPG', 'ekonomicz
 
 const AddGame = () => {
 
-    const params = useParams()
-    const id = params.id
+
+    const { gameId } = useParams()
     const navigate = useNavigate();
 
     const [addedGame, setAddedGame] = useState({
@@ -34,9 +34,9 @@ const AddGame = () => {
 
     useEffect(() => {
 
-        if (id) {
+        if (gameId) {
             axios
-                .get(config.api.url + `/games/${id}`)
+                .get(config.api.url + `/games/${gameId}`)
                 .then((res) => {
                     setAddedGame(res.data);
                 })
@@ -48,7 +48,7 @@ const AddGame = () => {
         return () => {
             resetForm()
         }
-    }, [id])
+    }, [gameId])
 
     const fileInputRef = useRef(null);
 
@@ -123,7 +123,7 @@ const AddGame = () => {
 
     const updateGame = (gameObj) => {
         axios
-            .put(config.api.url + `/games/update/${id}`, gameObj, {
+            .put(config.api.url + `/games/update/${gameId}`, gameObj, {
                 headers: { "Content-Type": "multipart/form-data" },
             })
             .then((res) => {
@@ -245,7 +245,7 @@ const AddGame = () => {
         if (addedGame.file) {
             formData.append("file", addedGame.file);
         }
-        if (id) {
+        if (gameId) {
             updateGame(formData); 
         } else {
             saveGame(formData); 

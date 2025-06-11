@@ -11,15 +11,14 @@ import { Link } from "react-router";
 const SinglePlayer = () => {
 
     const [player, setPlayer] = useState(null)
-    const params = useParams();
-    const id = params.id
+    const { playerId } = useParams()
     const navigate = useNavigate();
 
 
     useEffect(() => {
         const getSinglePlayer = () => {
             axios
-                .get(config.api.url + `/players/${id}`)
+                .get(config.api.url + `/players/${playerId}`)
                 .then((res) => {
                     setPlayer(res.data);
                 })
@@ -30,7 +29,7 @@ const SinglePlayer = () => {
 
         getSinglePlayer();
 
-    }, [id])
+    }, [playerId])
     
     if(!player) {
         return <h2>Loading...</h2>
@@ -53,7 +52,7 @@ const SinglePlayer = () => {
                 });
         }
     };
-console.log(player) 
+
     return (
         <div>
             

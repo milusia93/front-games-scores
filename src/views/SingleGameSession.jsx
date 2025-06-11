@@ -14,12 +14,11 @@ const SingleGameSession = () => {
     const [gameSession, setGameSession] = useState(null)
     const [showWinnerModal, setShowWinnerModal] = useState(false);
     // const [loading, setLoading] = useState(false);
-    const params = useParams();
-    const id = params.id
+    const {sessionId} = useParams();
     const navigate = useNavigate();
 
     const handleSaveWinner = (winnerId) => {
-        axios.put(`${config.api.url}/gamingsessions/update/${id}`, {
+        axios.put(`${config.api.url}/gamingsessions/update/${sessionId}`, {
             winner: winnerId,
             finished: true,
         })
@@ -35,7 +34,7 @@ const SingleGameSession = () => {
         const getSingleGameSession = () => {
             // setLoading(true)
             axios
-                .get(config.api.url + `/gamingsessions/${id}`)
+                .get(config.api.url + `/gamingsessions/${sessionId}`)
                 .then((res) => {
                     setGameSession(res.data)
                 })
@@ -47,11 +46,27 @@ const SingleGameSession = () => {
 
         getSingleGameSession()
 
-    }, [id])
+    }, [sessionId])
 
     if (!gameSession) {
         return <h2>Loading...</h2>
     }
+
+
+    const deleteGameSession = (sessionId) => {
+       
+
+        if (window.confirm("Usunąć sesję?")) {
+            axios
+                .delete(config.api.url + "/gamingsessions/delete/" + sessionId, { mode: "cors" })
+                .then(() => {
+                    navigate("/gamesessions");
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        }
+    };
 
     return (
         <Container className="sessions-container">
@@ -107,7 +122,8 @@ const SingleGameSession = () => {
             )}  
               <Link className="btn btn-primary" to={`/gamesessions/update/${gameSession._id}`}>
                         Edytuj
-                    </Link>                  
+                    </Link>
+                    <Button onClick={()=>{deleteGameSession(gameSession._id)}}>Usuń Sesję</Button>                  
                 </Card.Body>
             </Card>
             {/* } */}

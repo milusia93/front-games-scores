@@ -24,8 +24,8 @@ const AddNewGameSession = () => {
     date: "",
     winner: "",
   });
-  const params = useParams();
-  const sessionId = params.id
+
+  const { sessionId } = useParams();
 
   const [message, setMessage] = useState("");
   const [minnumplayers, setMinNumPlayers] = useState(0);
@@ -49,9 +49,10 @@ const AddNewGameSession = () => {
       axios
         .get(config.api.url + "/gamingsessions/" + sessionId)
         .then((response) => {
+          console.log("Dane sesji:", response.data);
           setNewSession({
             ...response.data,
-            date: response.data.date?.slice(0, 10), 
+            date: response.data.date?.slice(0, 10),
           });
 
           const selectedGame = games.find(
@@ -94,6 +95,7 @@ const AddNewGameSession = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    clearError(name);
 
     if (name === "finished") {
       const isFinished = value === "true"; // konwersja string → boolean
@@ -104,6 +106,7 @@ const AddNewGameSession = () => {
         winner: isFinished ? prev.winner : null, // jeśli sesja nie jest zakończona, usuń zwycięzcę
       }));
     } else if (name === "date") {
+
       const isFutureDate = !isPastOrToday(value);
 
       if (isFutureDate && newSession.finished === true) {
@@ -119,6 +122,12 @@ const AddNewGameSession = () => {
           date: value,
         }));
       }
+    } else if (name === "numplayers") {
+      setNewSession((prev) => ({
+        ...prev,
+        numplayers: Number(value),
+      }));
+
     } else {
       setNewSession((prev) => ({
         ...prev,
@@ -128,6 +137,7 @@ const AddNewGameSession = () => {
   };
 
   const handlePlayerCheckboxChange = (e, player) => {
+    clearError("players");
     if (e.target.checked) {
       if (newSession.players.length < newSession.numplayers) {
         setNewSession((prev) => ({
@@ -143,8 +153,12 @@ const AddNewGameSession = () => {
     }
   };
 
+  const clearError = (fieldName) => {
+    setErrors((prev) => ({ ...prev, [fieldName]: "" }));
+  };
   const handleGameChange = (e) => {
     const selectedGameId = e.target.value;
+    clearError("game")
 
     const selectedGame = games.find((game) => game._id === selectedGameId);
     setNewSession({
@@ -183,7 +197,7 @@ const AddNewGameSession = () => {
       setErrors((prev) => ({ ...prev, numplayers: "" }));
     }
 
-    if (newSession.players.length < newSession.numplayers) {
+    if (newSession.players.length !== newSession.numplayers) {
       setErrors((prev) => ({
         ...prev,
         players: "Wybierz odpowiednią liczbę graczy.",

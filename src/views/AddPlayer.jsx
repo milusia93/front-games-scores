@@ -20,8 +20,7 @@ const choicesColors = [
 
 const AddPlayer = () => {
 
-    const params = useParams()
-    const id = params.id
+    const { playerId } = useParams()
     const navigate = useNavigate();
 
     const [addedPlayer, setAddedPlayer] = useState({
@@ -41,9 +40,9 @@ const AddPlayer = () => {
 
     useEffect(() => {
            
-        if (id) {
+        if (playerId) {
             axios
-            .get(config.api.url + `/players/${id}`)
+            .get(config.api.url + `/players/${playerId}`)
             .then((res) => {
                 setAddedPlayer(res.data);
                 console.log(addedPlayer)
@@ -56,7 +55,7 @@ const AddPlayer = () => {
         return () => {
             resetForm()
         }
-    }, [id])
+    }, [playerId])
 
     const fileInputRef = useRef(null);
 
@@ -107,11 +106,11 @@ const AddPlayer = () => {
     const updatePlayer = (playerObj) => {
 
         axios
-            .put(config.api.url + `/players/update/${id}`, playerObj, {
+            .put(config.api.url + `/players/update/${playerId}`, playerObj, {
                 headers: { "Content-Type": "multipart/form-data" },
             })
             .then((res) => {
-                navigate(`/players/${id}`);
+                navigate(`/players/${playerId}`);
                 console.log(res);
             })
             .catch((err) => {
@@ -222,7 +221,7 @@ const AddPlayer = () => {
             formData.append("file", addedPlayer.file);
         }
 
-        if (id) {
+        if (playerId) {
             updatePlayer(formData); 
         } else {
             savePlayer(formData); 
