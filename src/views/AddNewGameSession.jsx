@@ -214,7 +214,6 @@ const AddNewGameSession = () => {
       setErrors((prev) => ({ ...prev, date: "" }));
     }
 
-    // NOWOŚĆ: jeśli sesja zakończona, ale nie ma winnera
     if (newSession.finished && !newSession.winner) {
       setErrors((prev) => ({ ...prev, winner: "Jeśli sesja jest zakończona, musisz wybrać zwycięzcę." }));
       hasErrors = true;
@@ -237,7 +236,7 @@ const AddNewGameSession = () => {
       : `${config.api.url}/gamingsessions/add`;
 
     axios[requestMethod](requestUrl, newSession)
-      .then((res) => {
+      .then(() => {
         setMessage("");
         navigate("/gamesessions");
       })

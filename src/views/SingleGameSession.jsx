@@ -14,17 +14,24 @@ const SingleGameSession = () => {
     const [gameSession, setGameSession] = useState(null)
     const [showWinnerModal, setShowWinnerModal] = useState(false);
     // const [loading, setLoading] = useState(false);
-    const {sessionId} = useParams();
+    const { sessionId } = useParams();
     const navigate = useNavigate();
 
     const handleSaveWinner = (winnerId) => {
-        axios.put(`${config.api.url}/gamingsessions/update/${sessionId}`, {
+        const updatedSession = {
+            ...gameSession,
             winner: winnerId,
             finished: true,
-        })
-            .then(res => {
-                setGameSession(res.data);
-                setShowWinnerModal(false);
+            players: gameSession.players.map((p) => p._id || p), // ważne!
+            game: gameSession.game._id || gameSession.game,     // ważne!
+        };
+        axios.put(`${config.api.url}/gamingsessions/update/${sessionId}`, updatedSession)
+            .then(() => {
+                axios.get(`${config.api.url}/gamingsessions/${sessionId}`)
+                    .then((res) => {
+                        setGameSession(res.data); // <-- już z populacją
+                        setShowWinnerModal(false);
+                    });
             })
             .catch(err => console.error(err));
     };
@@ -54,7 +61,7 @@ const SingleGameSession = () => {
 
 
     const deleteGameSession = (sessionId) => {
-       
+
 
         if (window.confirm("Usunąć sesję?")) {
             axios
@@ -115,19 +122,19 @@ const SingleGameSession = () => {
                             {" "}{gameSession.winner.name}
                         </div>
                     )}
-                       {gameSession.winner ? (
-                <Button className="btn" onClick={() => setShowWinnerModal(true)}>Zmień zwycięzcę</Button>
-            ) : (
-                <Button onClick={() => setShowWinnerModal(true)}>Wybierz zwycięzcę</Button>
-            )}  
-              <Link className="btn btn-primary" to={`/gamesessions/update/${gameSession._id}`}>
+                    {gameSession.winner ? (
+                        <Button className="btn" onClick={() => setShowWinnerModal(true)}>Zmień zwycięzcę</Button>
+                    ) : (
+                        <Button onClick={() => setShowWinnerModal(true)}>Wybierz zwycięzcę</Button>
+                    )}
+                    <Link className="btn btn-primary" to={`/gamesessions/update/${gameSession._id}`}>
                         Edytuj
                     </Link>
-                    <Button onClick={()=>{deleteGameSession(gameSession._id)}}>Usuń Sesję</Button>                  
+                    <Button onClick={() => { deleteGameSession(gameSession._id) }}>Usuń Sesję</Button>
                 </Card.Body>
             </Card>
             {/* } */}
-         
+
 
             <WinnerModal
                 show={showWinnerModal}

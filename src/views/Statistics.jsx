@@ -21,6 +21,24 @@ ChartJS.register(
   Legend
 );
 
+const Statistics = () => {
+    const [gamePlayStats, setGamePlayStats] = useState([]);
+    const getGamingSessions = () => {
+        axios
+            .get(config.api.url + "/statistics/games_per_player")
+            .then((res) => {
+                setGamePlayStats(res.data)
+                console.log("Dane z backendu:", res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    }
+
+    useEffect(() => {
+        getGamingSessions();
+    }, []);
+
 
 const options = {
     responsive: true,
@@ -37,36 +55,20 @@ const options = {
 };
 
 
-const labels = ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj'];
+const labels = gamePlayStats.map((g) => g.player.name);
 const data = {
     labels,
     datasets: [
         {
             label: 'Aktywni użytkownicy',
-            data: [120, 190, 300, 500, 200], // przykładowe dane
+            data: gamePlayStats.map((g) => g.gamesCount),
             backgroundColor: 'rgba(75, 192, 192, 0.5)',
         },
     ],
 };
 
+console.log(labels)
 
-const Statistics = () => {
-    const [gameSessions, setGameSessions] = useState([]);
-    const getGamingSessions = () => {
-        axios
-            .get(config.api.url + "/gamingsessions")
-            .then((res) => {
-                setGameSessions(res.data)
-                console.log("Dane z backendu:", res.data);
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    }
-
-    useEffect(() => {
-        getGamingSessions();
-    }, []);
 
     return (
         <div style={{ maxWidth: '600px', margin: '0 auto' }}>
