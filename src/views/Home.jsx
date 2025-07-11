@@ -3,6 +3,7 @@ import config from "../config"
 import axios from "axios"
 import { Table } from "react-bootstrap"
 import { PersonFill } from "react-bootstrap-icons"
+import "./Home.css"
 
 const Home = () => {
 
@@ -13,6 +14,7 @@ const Home = () => {
             .get(config.api.url + "/statistics/current_champion_title_counter")
             .then((res) => {
                 setChampionStats(res.data)
+                console.log(res.data)
             })
             .catch((err) => {
                 console.error(err)
@@ -25,6 +27,46 @@ const Home = () => {
 
     return (
         <div className="container">
+              {championsStats.length >= 3 && (
+            <div className="podium-container">
+                <div className="podium-place second"> {championsStats[0].avatarUrl ? (
+                    <img className="podium-personAvatarIcon" src={`${config.api.url}/${championsStats[0].avatarUrl}`} />
+                ) : (
+                    <div
+                        className="personAvatarIcon"
+                        style={{ backgroundColor: championsStats[0].color }}
+                    >
+                        <PersonFill />
+                    </div>
+                )}
+                    <div className="podium-number silver">2</div>
+                </div> <p>{championsStats[0].name}</p>
+                <div className="podium-place first">{championsStats[1].avatarUrl ? (
+                    <img className="podium-personAvatarIcon" src={`${config.api.url}/${championsStats[1].avatarUrl}`} />
+                ) : (
+                    <div
+                        className="personAvatarIcon"
+                        style={{ backgroundColor: championsStats[1].color }}
+                    >
+                        <PersonFill />
+                    </div>
+                )}
+                    <div className="podium-number gold">1</div>
+                </div>
+                <div className="podium-place third">{championsStats[2].avatarUrl ? (
+                    <img className="podium-personAvatarIcon" src={`${config.api.url}/${championsStats[2].avatarUrl}`} />
+                ) : (
+                    <div
+                        className="personAvatarIcon"
+                        style={{ backgroundColor: championsStats[2].color }}
+                    >
+                        <PersonFill />
+                    </div>
+                )}
+                    <div className="podium-number bronze">3</div>
+                </div>
+            </div>
+        )}
             <Table striped bordered hover>
                 <thead>
                     <tr>

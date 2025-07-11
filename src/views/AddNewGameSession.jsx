@@ -12,8 +12,13 @@ const AddNewGameSession = () => {
     players: [],
     date: "",
     finished: false,
+    time: "",
     winner: null,
   });
+
+  useEffect(() => {
+  console.log("Aktualny stan newSession:", newSession);
+}, [newSession]);
 
   const [games, setGames] = useState([]);
   const [players, setPlayers] = useState([]);
@@ -22,6 +27,7 @@ const AddNewGameSession = () => {
     numplayers: "",
     players: "",
     date: "",
+    time: "",
     winner: "",
   });
 
@@ -134,6 +140,7 @@ const AddNewGameSession = () => {
         [name]: value,
       }));
     }
+    console.log(newSession)
   };
 
   const handlePlayerCheckboxChange = (e, player) => {
@@ -212,6 +219,13 @@ const AddNewGameSession = () => {
       hasErrors = true;
     } else {
       setErrors((prev) => ({ ...prev, date: "" }));
+    }
+
+    if (newSession.finished && !newSession.time) {
+      setErrors((prev) => ({ ...prev, time: "Jeśli sesja jest zakończona, musisz wybrać godzine zakończenia." }));
+      hasErrors = true;
+    } else {
+      setErrors((prev) => ({ ...prev, time: "" }));
     }
 
     if (newSession.finished && !newSession.winner) {

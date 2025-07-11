@@ -1,4 +1,3 @@
-import React from "react";
 import { Form, Button, FormGroup, FormLabel, FormCheck, FormControl } from "react-bootstrap";
 
 
@@ -113,7 +112,7 @@ const GameSessionForm = ({
                     <FormControl
                         as="select"
                         name="winner"
-                        value={newSession.winner}
+                        value={newSession.winner?._id || ""}
                         onChange={handleInputChange}
                     >
                         <option value="">Wybierz zwycięzcę</option>
@@ -127,6 +126,19 @@ const GameSessionForm = ({
                     </FormControl>
                     {errors.winner && <p className="warning">{errors.winner}</p>}
                 </FormGroup>
+            )}
+
+            {newSession.finished && (
+                <FormGroup className="mb-3">
+                <FormLabel>Godzina zakończenia</FormLabel>
+                <FormControl
+                    type="time"
+                    name="time"
+                    value={newSession.time}
+                    onChange={handleInputChange}
+                />
+                {errors.time && <p className="warning">{errors.time}</p>}
+            </FormGroup>
             )}
 
 

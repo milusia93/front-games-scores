@@ -115,6 +115,7 @@ const GameSessions = () => {
                     <Card.Body>
                         <p>Liczba graczy: {session.numplayers}</p>
                         <p>Data: {new Date(session.date).toLocaleDateString()}</p>
+                        <p>Godzina: {session.time}</p>
                         <strong>Gracze:</strong>
                         <ListGroup as="ul" className="mb-3">
                             {session.players.map((player) => (
