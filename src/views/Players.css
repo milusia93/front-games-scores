@@ -1,12 +1,34 @@
-.personAvatarIcon {
-    height: 40px;
-    width: 40px;
-    border-radius: 50%;
-    text-align: center;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-size: large;
-    margin-right: 5px;
-  }
+.playerAvatarInfoWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  margin-bottom: 5px;
+}
+
+.playerIconWrapper {
+  height: 50px;
+  width: 50px;
+  border: 2px solid #c0c0c0;
+  border-radius: 50%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: large;
+  margin-left: 5px;
+}
+
+.personAvatarIconPlayerList {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+
+}
+
+.playerIconWrapper .personAvatarIcon svg {
+  width: 50%;
+  height: 50%;
+}

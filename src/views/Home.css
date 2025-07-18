@@ -1,68 +1,84 @@
 .podium-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-content: center;
-    height: 150px;
-    position: relative;
-    margin-top: 20px;
-    margin-bottom: 20px;
+  height: 250px;
+  position: relative;
+}
+
+.podium-place-holder {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+}
+
+.podium-place-holder p {
+    text-align: center;
+    margin-top: 15px;
 }
 
 .podium-place {
-    height: 100px;
-    width: 100px;
-    border-radius: 50%;
-    border: 4px solid ;
-    display: flex;
-    justify-content: center;
-    position: absolute;
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+  border: 4px solid;
+  display: flex;
+  justify-content: center;
+  position: relative;
 }
 
 .first {
-    height: 120px;
-    width: 120px;
-    border-color: goldenrod;
-    z-index: 3;
+  z-index: 3;
+}
+
+.first .podium-place {
+  border-color: goldenrod;
+  z-index: 3;
+  width: 120px;
+  height: 120px;
 }
 
 .second {
-    border-color: silver;
-    transform: translate(-80px, 50px);
-    z-index: 2;
-    
+  z-index: 2;
+  top: 25%;
+  left: calc(50% - 80px);
+}
+
+.second .podium-place {
+  border-color: silver;
 }
 
 .third {
-    border-color: rgb(165, 120, 53);
-    transform: translate(80px, 50px);
-    z-index: 1;
+  top: 25%;
+  z-index: 1;
+  left: calc(50% + 80px);
+}
+
+.third .podium-place {
+  border-color: rgb(165, 120, 53);
 }
 
 .podium-number {
- align-self: flex-end;
- height: 35px;
- width: 35px;
- border-radius: 50%;
- position: absolute;
- transform: translate(0px, 20px);
- display: flex;
- justify-content: center;
- align-items: center;
- color: black;
- font-weight: bold;
+  align-self: flex-end;
+  height: 35px;
+  width: 35px;
+  border-radius: 50%;
+  position: absolute;
+  transform: translate(0px, 20px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  font-weight: bold;
 }
 
 .gold {
-    background-color: goldenrod;
+  background-color: goldenrod;
 }
 
 .silver {
-    background-color: silver;
+  background-color: silver;
 }
 
 .bronze {
-    background-color: rgb(165, 120, 53);
+  background-color: rgb(165, 120, 53);
 }
 
 .podium-personAvatarIcon {
@@ -70,5 +86,42 @@
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
- 
+}
+
+.personAvatarIcon.placeholderPodium {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.personAvatarIcon.placeholderPodium svg {
+  width: 50%;
+  height: 50%;
+}
+.pointer {
+  cursor: pointer;
+}
+.pointer td {
+  vertical-align: middle;
+}
+.playerAvatarAndNameWrapper{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.personAvatarListWrapper {
+  height: 40px;
+  width: 40px;
+  border: 2px solid #c0c0c0;
+  border-radius: 50%;
+  margin-right: 5px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: large;
 }

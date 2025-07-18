@@ -8,26 +8,35 @@ import "./SinglePlayer.css";
 
 const SinglePlayer = () => {
 
-    const [player, setPlayer] = useState(null)
-    const { playerId } = useParams()
+    const [player, setPlayer] = useState(null);
+    const [playerTitles, setPlayerTitles] = useState(null);
+    const { playerId } = useParams();
     const navigate = useNavigate();
 
+    useEffect(() => {
+        axios
+            .get(config.api.url + `/players/${playerId}`)
+            .then((res) => {
+                setPlayer(res.data);
+                console.log("dane", res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    }, [playerId]);
 
     useEffect(() => {
-        const getSinglePlayer = () => {
-            axios
-                .get(config.api.url + `/players/${playerId}`)
-                .then((res) => {
-                    setPlayer(res.data);
-                })
-                .catch((err) => {
-                    console.error(err);
-                });
-        }
-
-        getSinglePlayer();
-
-    }, [playerId])
+        axios
+            .get(config.api.url + "/statistics/current_champion_title_counter")
+            .then((res) => {
+                const found = res.data.find((p) => p.playerId === playerId);
+                setPlayerTitles(found || { championTitles: 0 });
+                console.log("playerTitles", found);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    }, [playerId]);
 
     const deletePlayer = (playerId) => {
         if (player.gamesPlayed && player.gamesPlayed.length > 0) {
@@ -47,29 +56,37 @@ const SinglePlayer = () => {
         }
     };
 
-    if (!player) {
-        return <h2>Loading...</h2>
-    }
+    if (!player || !player.gamesPlayed) return <h2>Loading...</h2>;
 
     return (
         <Container>
             <h1>Player</h1>
             <Card key={player._id} className="mb-2">
-                <Card.Header>{player.name}</Card.Header>
+                <Card.Header>Informacje o graczu {player.name}</Card.Header>
                 <Card.Body>
-                    <p>Email: {player.email}</p>
-                    <div className="playerIconWrapper">
-                        Avatar:{" "}
-                        {player.avatarUrl ? (
-                            <img className="personAvatarIcon" src={`${config.api.url}/${player.avatarUrl}`} />
-                        ) : (
-                            <div
-                                className="personAvatarIcon"
-                                style={{ backgroundColor: player.color }}
-                            >
-                                <PersonFill />
-                            </div>
-                        )}
+                    <div className="avatarAndInfoWrapper">
+                        <div className="singlePlayerIconWrapper">
+                            {player.avatarUrl ? (
+                                <img className="playerCardAvatarIcon" src={`${config.api.url}/${player.avatarUrl}`} />
+                            ) : (
+                                <div
+                                    className="personAvatarIcon"
+                                    style={{ backgroundColor: player.color }}
+                                >
+                                    <PersonFill />
+                                </div>
+                            )}
+                        </div>
+                        <div className="playerInfoWrapper">
+                            <p>Nazwa użytkownika: {player.name}</p>
+                            <p>Email: {player.email}</p>
+                            <p>Kolor: {player.color}</p>
+                            {playerTitles && (
+                                <p>Aktualne tytuły mistrza: {playerTitles.championTitles}</p>
+                            )}
+                            <p></p>
+                        </div>
+
                     </div>
                     <Link className="btn btn-primary" to={`/players/update/${player._id}`}>Edytuj</Link>
                     <Button onClick={() => { deletePlayer(player._id) }}>Usuń Gracza</Button>

@@ -32,11 +32,12 @@ const Players = () => {
           <Card key={player._id} className="mb-2">
             <Card.Header>{player.name}</Card.Header>
             <Card.Body>
-              <p>Email: {player.email}</p>
+              <p>Email: {player.email}</p><div className="playerAvatarInfoWrapper">
+                <p>Avatar:{" "}</p>
               <div className="playerIconWrapper">
-                Avatar:{" "}
+                
                 {player.avatarUrl ? (
-                  <img className="personAvatarIcon" src={`${config.api.url}/${player.avatarUrl}`} />
+                  <img className="personAvatarIconPlayerList" src={`${config.api.url}/${player.avatarUrl}`} />
                 ) : (
                   <div
                     className="personAvatarIcon"
@@ -45,6 +46,7 @@ const Players = () => {
                     <PersonFill />
                   </div>
                 )}
+              </div>
               </div>
               <Link className="btn btn-primary" to={`/players/${player._id}`}>Szczegóły</Link>
             </Card.Body>
